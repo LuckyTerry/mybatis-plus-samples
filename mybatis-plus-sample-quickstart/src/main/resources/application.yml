@@ -2,7 +2,7 @@
 spring:
   datasource:
     type : com.alibaba.druid.pool.DruidDataSource
-    url : jdbc:mysql://192.168.100.135:3306/mybatis_plug_db?useUnicode=true&characterEncoding=utf-8
+    url : jdbc:mysql://192.168.100.135:3308/mybatis_plus_db?useUnicode=true&characterEncoding=utf-8
     username: root
     password : mysqlHolder
     driverClassName : com.mysql.jdbc.Driver
@@ -36,6 +36,9 @@ mybatis-plus:
     #sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
     #自定义填充策略接口实现
     #meta-object-handler: com.baomidou.springboot.xxx
+    #如果未指定dbType，则启动时会connect数据库以获取db信息
+    db-config:
+      db-type: mysql
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
