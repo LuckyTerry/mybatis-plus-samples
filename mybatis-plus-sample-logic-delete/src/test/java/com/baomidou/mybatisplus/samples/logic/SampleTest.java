@@ -30,7 +30,30 @@ public class SampleTest {
 
     @Test
     public void testLogicDelete() {
-        userMapper.delete(new QueryWrapper<User>().eq("age", 2));
+        userMapper.delete(new QueryWrapper<User>().eq("age", 24));
     }
 
+    @Test
+    public void testLogicEnableById() {
+        userMapper.enableById(new User().setId(4).setIsEnable(false));
+    }
+
+    @Test
+    public void testLogicEnable() {
+        userMapper.enable(new User().setIsEnable(true), new QueryWrapper<User>().eq("id", 4));
+    }
+
+    @Test
+    public void testLogicSortById() {
+        userMapper.sortById(new User().setId(1).setSort(1));
+        userMapper.sortById(new User().setId(2).setSort(2));
+        userMapper.sortById(new User().setId(3).setSort(3));
+        userMapper.sortById(new User().setId(4).setSort(4));
+        userMapper.sortById(new User().setId(5).setSort(5));
+    }
+
+    @Test
+    public void testLogicSort() {
+        userMapper.sort(new User().setSort(99), new QueryWrapper<User>().eq("id", 4));
+    }
 }

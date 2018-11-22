@@ -24,12 +24,9 @@ mybatis-plus:
     call-setters-on-nulls: false
   global-config:
     refresh: false
-    sql-parser-cache: false
     db-config:
-      capital-mode: true
       db-type: mysql
-      field-strategy: not_empty
       id-type: auto
-      logic-delete-value: 0
-      logic-not-delete-value: 1
-      table-underline: true
+      field-strategy: not_empty
+      logic-delete-value: 1
+      logic-not-delete-value: 0

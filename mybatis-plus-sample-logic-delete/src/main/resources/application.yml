@@ -1,22 +1,32 @@
 # DataSource Config
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    schema: classpath:db/schema-h2.sql
-    data: classpath:db/data-h2.sql
-    url: jdbc:h2:mem:test
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.100.135:3308/mybatis_plus_db?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: test
+    password: mysqlHolder
+    driverClassName: com.mysql.jdbc.Driver
 
 # Logger Config
 logging:
   level:
-    com.baomidou.mybatisplus.samples: debug
+    com.baomidou.mybatisplus.samples.logic: debug
+
 mybatis-plus:
-  # 扫描 mapper.xml
-  mapper-locations: classpath:/mapper/*Mapper.xml
+  mapper-locations: classpath*:/mapper/**Mapper.xml
+  typeAliasesPackage: com.baomidou.mybatisplus.samples.logic.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    aggressive-lazy-loading: true
+    auto-mapping-behavior: partial
+    auto-mapping-unknown-column-behavior: warning
+    cache-enabled: false
+    call-setters-on-nulls: false
   global-config:
-    banner: false
+    refresh: false
     db-config:
-      logic-delete-value: 1 #默认值1
-      logic-not-delete-value: 0 #默认值0
+      db-type: mysql
+      id-type: auto
+      field-strategy: not_empty
+      logic-delete-value: 1
+      logic-not-delete-value: 0
