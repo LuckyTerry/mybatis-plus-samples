@@ -31,6 +31,6 @@ public class SqlSetUtils {
     private static TableFieldInfo tableFieldInfoByColumn(TableInfo tableInfo, String column) {
         return tableInfo.getFieldList().stream()
                 .filter(tableFieldInfo -> column.equals(tableFieldInfo.getColumn())).findFirst()
-                .orElseThrow(() -> ExceptionUtils.mpe(String.format("can't find the sortFiled from table {%s}", tableInfo.getTableName())));
+                .orElseThrow(() -> ExceptionUtils.mpe(String.format("can't find the filed [%s] from table [%s]", column, tableInfo.getTableName())));
     }
 }

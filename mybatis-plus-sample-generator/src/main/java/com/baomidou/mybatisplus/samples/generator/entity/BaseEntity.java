@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.samples.generator.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -7,5 +8,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class BaseEntity {
 
+    @TableId
     private Long id;
 }

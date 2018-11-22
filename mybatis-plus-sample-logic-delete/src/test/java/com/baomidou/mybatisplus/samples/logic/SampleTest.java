@@ -35,12 +35,12 @@ public class SampleTest {
 
     @Test
     public void testLogicEnableById() {
-        userMapper.enableById(new User().setId(4).setIsEnable(false));
+        userMapper.enableById(new User().setId(4).setEnable(false));
     }
 
     @Test
     public void testLogicEnable() {
-        userMapper.enable(new User().setIsEnable(true), new QueryWrapper<User>().eq("id", 4));
+        userMapper.enable(new User().setEnable(true), new QueryWrapper<User>().eq("id", 4));
     }
 
     @Test
