@@ -1,23 +1,22 @@
 package com.baomidou.mybatisplus.samples.generator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.FileOutConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * <p>
@@ -30,11 +29,9 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 public class MysqlGenerator {
 
     /**
-     * <p>
      * 读取控制台内容
-     * </p>
      */
-    public static String scanner(String tip) {
+    private static String scanner(String tip) {
         Scanner scanner = new Scanner(System.in);
         StringBuilder help = new StringBuilder();
         help.append("请输入" + tip + "：");
@@ -53,67 +50,141 @@ public class MysqlGenerator {
      */
     public static void main(String[] args) {
         // 代码生成器
-        AutoGenerator mpg = new AutoGenerator();
+        basicConfig().execute();
+    }
 
-        // 全局配置
-        GlobalConfig gc = new GlobalConfig();
+    private static AutoGenerator basicConfig() {
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath + "/mybatis-plus-sample-generator/src/main/java");
-        gc.setAuthor("terry");
-        gc.setOpen(false);
-        mpg.setGlobalConfig(gc);
+        String moduleName = scanner("模块名");
+        String pkgName = "com.baomidou.mybatisplus.samples.generator";
+        String javaPath = "/mybatis-plus-sample-generator/src/main/java";
+        String mapperPath = "/mybatis-plus-sample-generator/src/main/resources/mapper/";
+        AutoGenerator autoGenerator = new AutoGenerator();
+        autoGenerator.setDataSource(dataSourceConfig());
+        autoGenerator.setStrategy(strategyConfig(moduleName, pkgName));
+        autoGenerator.setPackageInfo(packageInfoConfig(moduleName, pkgName));
+        autoGenerator.setTemplate(templateConfig());
+        autoGenerator.setTemplateEngine(templateEngineConfig());
+        autoGenerator.setGlobalConfig(globalConfig(projectPath, javaPath));
+        autoGenerator.setCfg(injectionConfig(projectPath, moduleName, mapperPath));
+        return autoGenerator;
+    }
 
-        // 数据源配置
-        DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://192.168.100.135:3308/mybatis_plus_db?useUnicode=true&useSSL=false&characterEncoding=utf8");
-        // dsc.setSchemaName("public");
-        dsc.setDriverName("com.mysql.jdbc.Driver");
-        dsc.setUsername("root");
-        dsc.setPassword("mysqlHolder");
-        mpg.setDataSource(dsc);
+    private static DataSourceConfig dataSourceConfig() {
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+        // 数据库信息查询类，默认由 dbType 类型决定选择对应数据库内置实现
+        dataSourceConfig.setDbQuery(new MySqlQuery());
+        // 数据库类型
+        dataSourceConfig.setDbType(DbType.MYSQL);
+        // 数据库 schema name
+//        dsc.setSchemaName("public");
+        dataSourceConfig.setTypeConvert(new MySqlTypeConvert());
+        // 驱动连接的URL
+        dataSourceConfig.setUrl("jdbc:mysql://192.168.100.135:3308/mybatis_plus_db?useUnicode=true&useSSL=false&characterEncoding=utf8");
+        // 驱动名称
+        dataSourceConfig.setDriverName("com.mysql.jdbc.Driver");
+        // 数据库连接用户名
+        dataSourceConfig.setUsername("root");
+        // 数据库连接密码
+        dataSourceConfig.setPassword("mysqlHolder");
 
-        // 包配置
-        PackageConfig pc = new PackageConfig();
-        pc.setModuleName(scanner("模块名"));
-        pc.setParent("com.baomidou.mybatisplus.samples.generator");
-        mpg.setPackageInfo(pc);
+        return dataSourceConfig;
+    }
 
-        // 自定义配置
-        InjectionConfig cfg = new InjectionConfig() {
+    private static StrategyConfig strategyConfig(String moduleName, String pkgName) {
+        StrategyConfig strategyConfig = new StrategyConfig();
+        // 是否大写命名
+        strategyConfig.setCapitalMode(false);
+        // 是否跳过视图
+        strategyConfig.setSkipView(false);
+        // 数据库表映射到实体的命名策略
+        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
+        // 数据库表字段映射到实体的命名策略, 未指定按照 naming 执行
+        strategyConfig.setColumnNaming(NamingStrategy.underline_to_camel);
+        // 表前缀
+        strategyConfig.setTablePrefix(moduleName + "_");
+        // 字段前缀
+//        strategyConfig.setFieldPrefix();
+        // 自定义继承的Entity类全称，带包名
+        strategyConfig.setSuperEntityClass(pkgName + ".entity.BaseEntity");
+        // 自定义基础的Entity类，公共字段
+        strategyConfig.setSuperEntityColumns("id");
+        // 自定义继承的Mapper类全称，带包名
+//        strategyConfig.setSuperMapperClass();
+        // 自定义继承的Service类全称，带包名
+//        strategyConfig.setSuperServiceClass();
+        // 自定义继承的ServiceImpl类全称，带包名
+//        strategyConfig.setSuperServiceImplClass();
+        // 自定义继承的Controller类全称，带包名
+        strategyConfig.setSuperControllerClass(pkgName + ".controller.BaseController");
+        // 需要包含的表名，允许正则表达式（与exclude二选一配置）
+        strategyConfig.setInclude(scanner("表名"));
+        // 需要排除的表名，允许正则表达式
+//        strategyConfig.setExclude("");
+        // 【实体】是否生成字段常量（默认 false）
+        strategyConfig.setEntityColumnConstant(false);
+        // 【实体】是否为构建者模型（默认 false）
+        strategyConfig.setEntityBuilderModel(false);
+        // 【实体】是否为lombok模型（默认 false）
+        strategyConfig.setEntityLombokModel(true);
+        // Boolean类型字段是否移除is前缀（默认 false）
+        strategyConfig.setEntityBooleanColumnRemoveIsPrefix(true);
+        // 生成 @RestController 控制器
+        strategyConfig.setRestControllerStyle(true);
+        // 驼峰转连字符
+        strategyConfig.setControllerMappingHyphenStyle(true);
+        // 乐观锁属性名称
+//        strategyConfig.setVersionFieldName();
+        // 逻辑删除属性名称
+        strategyConfig.setLogicDeleteFieldName("is_deleted");
+        // 表填充字段
+//        strategyConfig.setTableFillList();
+
+        return strategyConfig;
+    }
+
+    private static PackageConfig packageInfoConfig(String moduleName, String pkgName) {
+        PackageConfig packageConfig = new PackageConfig();
+        packageConfig.setParent(pkgName);
+        packageConfig.setModuleName(moduleName);
+        return packageConfig;
+    }
+
+    private static TemplateConfig templateConfig() {
+        return new TemplateConfig().setXml(null);
+    }
+
+    private static AbstractTemplateEngine templateEngineConfig() {
+        // 选择 freemarker 引擎需要指定如下加，注意 pom 依赖必须有！
+        return new FreemarkerTemplateEngine();
+    }
+
+    private static GlobalConfig globalConfig(String projectPath, String javaPath) {
+        GlobalConfig globalConfig = new GlobalConfig();
+        globalConfig.setOutputDir(projectPath + javaPath);
+        globalConfig.setAuthor("terry");
+        globalConfig.setOpen(false);
+        return globalConfig;
+    }
+
+    private static InjectionConfig injectionConfig(String projectPath, String moduleName, String mapperPath) {
+        InjectionConfig injectionConfig = new InjectionConfig() {
             @Override
             public void initMap() {
                 // to do nothing
             }
         };
-        List<FileOutConfig> focList = new ArrayList<>();
-        focList.add(new FileOutConfig("/templates/mapper.xml.ftl") {
+        List<FileOutConfig> fileOutConfigs = new ArrayList<>();
+        fileOutConfigs.add(new FileOutConfig("/templates/mapper.xml.ftl") {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
-                return projectPath + "/mybatis-plus-sample-generator/src/main/resources/mapper/" + pc.getModuleName()
-                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                return projectPath + mapperPath
+                        + moduleName + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
-        cfg.setFileOutConfigList(focList);
-        mpg.setCfg(cfg);
-        mpg.setTemplate(new TemplateConfig().setXml(null));
+        injectionConfig.setFileOutConfigList(fileOutConfigs);
 
-        // 策略配置
-        StrategyConfig strategy = new StrategyConfig();
-        strategy.setNaming(NamingStrategy.underline_to_camel);
-        strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-        // terry: entity暂时不需要父类
-//        strategy.setSuperEntityClass("com.baomidou.mybatisplus.samples.generator.common.BaseEntity");
-//        strategy.setEntityLombokModel(true);
-        strategy.setSuperControllerClass("com.baomidou.mybatisplus.samples.generator.controller.BaseController");
-        strategy.setInclude(scanner("表名"));
-        strategy.setSuperEntityColumns("id");
-        strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix(pc.getModuleName() + "_");
-        mpg.setStrategy(strategy);
-        // 选择 freemarker 引擎需要指定如下加，注意 pom 依赖必须有！
-        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
-        mpg.execute();
+        return injectionConfig;
     }
-
 }
