@@ -29,23 +29,6 @@ import java.util.Scanner;
 public class MysqlGenerator {
 
     /**
-     * 读取控制台内容
-     */
-    private static String scanner(String tip) {
-        Scanner scanner = new Scanner(System.in);
-        StringBuilder help = new StringBuilder();
-        help.append("请输入" + tip + "：");
-        System.out.println(help.toString());
-        if (scanner.hasNext()) {
-            String ipt = scanner.next();
-            if (StringUtils.isNotEmpty(ipt)) {
-                return ipt;
-            }
-        }
-        throw new MybatisPlusException("请输入正确的" + tip + "！");
-    }
-
-    /**
      * RUN THIS
      */
     public static void main(String[] args) {
@@ -106,9 +89,9 @@ public class MysqlGenerator {
         // 字段前缀
 //        strategyConfig.setFieldPrefix();
         // 自定义继承的Entity类全称，带包名
-        strategyConfig.setSuperEntityClass(pkgName + ".entity.BaseEntity");
+//        strategyConfig.setSuperEntityClass(pkgName + ".entity.BaseEntity");
         // 自定义基础的Entity类，公共字段
-        strategyConfig.setSuperEntityColumns("id");
+//        strategyConfig.setSuperEntityColumns("id");
         // 自定义继承的Mapper类全称，带包名
 //        strategyConfig.setSuperMapperClass();
         // 自定义继承的Service类全称，带包名
@@ -116,7 +99,7 @@ public class MysqlGenerator {
         // 自定义继承的ServiceImpl类全称，带包名
 //        strategyConfig.setSuperServiceImplClass();
         // 自定义继承的Controller类全称，带包名
-        strategyConfig.setSuperControllerClass(pkgName + ".controller.BaseController");
+//        strategyConfig.setSuperControllerClass(pkgName + ".controller.BaseController");
         // 需要包含的表名，允许正则表达式（与exclude二选一配置）
         strategyConfig.setInclude(scanner("表名"));
         // 需要排除的表名，允许正则表达式
@@ -186,5 +169,20 @@ public class MysqlGenerator {
         injectionConfig.setFileOutConfigList(fileOutConfigs);
 
         return injectionConfig;
+    }
+
+    /**
+     * 读取控制台内容
+     */
+    private static String scanner(String tip) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(("请输入" + tip + "："));
+        if (scanner.hasNext()) {
+            String ipt = scanner.next();
+            if (StringUtils.isNotEmpty(ipt)) {
+                return ipt;
+            }
+        }
+        throw new MybatisPlusException("请输入正确的" + tip + "！");
     }
 }
